@@ -1,0 +1,21 @@
+.page-header {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  font-weight: 500;
+  border-left: 5px solid #ddd;
+  min-height: 40px;
+  margin-bottom: 30px;
+}
+
+.page-header__text {
+  color: #888;
+  padding: 0 1em;
+  vertical-align: 15%;
+  white-space: nowrap;
+}
+
+// .page-header__middle-line {
+//   border-top: 1px solid #ddd;
+//   flex-grow: 1;
+// }

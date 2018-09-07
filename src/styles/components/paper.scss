@@ -1,0 +1,11 @@
+.paper {
+  @include paper($padding: $paper-padding);
+}
+
+.paper__title {
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  padding: 4px 0;
+}

@@ -1,0 +1,28 @@
+html,
+body {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100%;
+  overflow-y: scroll;
+}
+
+*,
+*::before,
+*::after {
+  // box-sizing: border-box; // OR
+  // box-sizing: inherit; // if it was set for html
+}
+
+// #app {
+//   min-height: 100%;
+// }
+
+@media print {
+  body {
+    background-color: #fff;
+  }
+}

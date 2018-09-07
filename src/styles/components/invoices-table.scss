@@ -1,0 +1,36 @@
+// .invoices-table {
+//   min-width: 900px;
+
+//   @media (min-width: $lg) {
+//     min-width: 1084px;
+//   }
+// }
+
+// total table min-width: 900px (1084px)
+.invoices-table__created-column {
+  min-width: 160px;
+  white-space: nowrap;
+}
+
+.invoices-table__number-column {
+  min-width: 90px;
+  white-space: nowrap;
+}
+
+.invoices-table__supply-column {
+  min-width: 160px;
+  white-space: nowrap;
+}
+
+.invoices-table__comment-column {
+  min-width: 200px; // up to 300px within table min-width (900px)
+}
+
+.invoices-table__actions-column {
+  min-width: 190px;
+  white-space: nowrap;
+}
+
+.ant-table-tbody td.invoices-table__comment-column {
+  word-break: break-word;
+}

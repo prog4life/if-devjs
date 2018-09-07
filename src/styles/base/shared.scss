@@ -1,0 +1,20 @@
+@mixin paper($padding) {
+  background-color: #fff;
+  border: $paper-border-width solid #e8e8e8;
+  border-radius: 2px;
+  border-color: rgba(0, 0, 0, 0.09);
+  padding: $padding;
+}
+
+%page-base {
+  min-height: 100vh;
+  padding: 32px 16px;
+}
+
+.max-content {
+  @media (min-width: $lg) {
+    /* equal to width of "paper" that wrapes form and table:
+    form/table min-width + paper padding x 2 + paper border x 2 = 1126px */
+    max-width: 1084px + $paper-padding * 2 + $paper-border-width * 2;
+  }
+}

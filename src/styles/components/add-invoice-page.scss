@@ -1,0 +1,7 @@
+.add-invoice {
+  @extend %page-base;
+}
+
+.add-invoice__content {
+  @extend .max-content;
+}
