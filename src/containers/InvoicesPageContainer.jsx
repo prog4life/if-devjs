@@ -24,17 +24,20 @@ class InvoicesPageContainer extends React.Component {
     isFetching: PropTypes.bool.isRequired,
     resetDisplayInvoice: PropTypes.func.isRequired,
   }
+
   static defaultProps = {
     delError: null,
     displayInvoice: null,
     fetchError: null,
   }
+
   componentDidMount() {
     const { fetchInvoices, resetDisplayInvoice } = this.props;
 
     resetDisplayInvoice();
     fetchInvoices();
   }
+
   componentDidUpdate(prevProps) {
     const { delError, fetchError } = this.props;
 
@@ -50,11 +53,13 @@ class InvoicesPageContainer extends React.Component {
       message.error('Failed to load invoices. Maybe try to reload :P');
     }
   }
+
   componentWillUnmount() {
     // const { resetDisplayInvoice } = this.props;
 
     // resetDisplayInvoice(); // NOTE: looks like it is unnecessary
   }
+
   render() {
     const { invoices, isFetching, displayInvoice } = this.props;
 
@@ -67,6 +72,8 @@ class InvoicesPageContainer extends React.Component {
     );
   }
 }
+
+// TODO: rename displayInvoice to invoiceToDisplayId
 
 const mapStateToProps = state => ({
   invoices: getInvoicesList(state),

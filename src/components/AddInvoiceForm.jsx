@@ -29,16 +29,19 @@ class AddInvoiceForm extends React.Component {
       comment: PropTypes.object,
     }),
   }
+
   static defaultProps = {
     validate: null,
     validation: {},
   }
+
   state = {
     number: '',
     dateDue: null,
     supplyDate: null,
     comment: '',
   }
+
   handleSubmit = (event) => {
     event.preventDefault();
 
@@ -70,6 +73,7 @@ class AddInvoiceForm extends React.Component {
 
     createInvoice(invoice);
   }
+
   handleChangeThrottled = (event) => {
     const { validate, validation } = this.props;
     const { name, value } = event.target;
@@ -81,6 +85,7 @@ class AddInvoiceForm extends React.Component {
       validate({ [name]: value.trim() });
     }
   }
+
   handleDateChange(dateType) {
     return (momentObj) => {
       this.setState({
@@ -88,6 +93,7 @@ class AddInvoiceForm extends React.Component {
       });
     };
   }
+
   render() {
     const { isCreating, validation } = this.props;
     const { number, comment } = this.state;

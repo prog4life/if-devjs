@@ -12,19 +12,25 @@ class InvoicesTable extends React.Component {
     invoices: PropTypes.arrayOf(PropTypes.object).isRequired,
     isFetching: PropTypes.bool.isRequired,
   }
+
   static defaultProps = {
     displayInvoice: null,
   }
+
+  scrollRef = null
+
   componentDidMount() {
     this.scrollConditionally();
   }
+
   componentDidUpdate() {
     this.scrollConditionally();
   }
+
   setScrollRef = (node) => {
     this.scrollRef = node;
   }
-  scrollRef = null
+
   scrollConditionally() {
     const { displayInvoice } = this.props;
 
@@ -34,21 +40,26 @@ class InvoicesTable extends React.Component {
       this.scrollRef.parentNode.scrollIntoView();
     }
   }
-  // render first column cells content with optional ref for scrolling
-  renderCreatedTextWithRef = (text, record) => {
+
+  // render first column cell's content optionally wrapped by span with ref for
+  // scrolling to it
+  renderContentWithOptionalRef = (text, record) => {
     const { displayInvoice } = this.props;
     const isInvoiceToDisplay = record.id === displayInvoice;
 
     return isInvoiceToDisplay
-      ?
+      ? (
         <span ref={this.setScrollRef}>
           {text}
         </span>
+      )
       : text;
   }
+
   renderControlButtons = (text, record) => ( // (text, record, index)
     <ButtonsContainer id={record.id} />
   )
+
   render() {
     const { invoices, isFetching } = this.props;
 
@@ -71,7 +82,7 @@ class InvoicesTable extends React.Component {
           title="Create"
           dataIndex="date_created"
           key="date_created"
-          render={this.renderCreatedTextWithRef}
+          render={this.renderContentWithOptionalRef}
         />
         <Column
           className="invoices-table__number-column"

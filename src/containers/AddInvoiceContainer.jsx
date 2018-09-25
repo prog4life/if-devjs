@@ -18,9 +18,11 @@ class AddInvoiceContainer extends React.Component {
     fetchInvoices: PropTypes.func.isRequired,
     invoiceNumbers: PropTypes.arrayOf(PropTypes.number).isRequired,
   }
+
   static defaultProps = {
     error: null,
   }
+
   state = {
     redirectTo: null,
     validation: {
@@ -28,10 +30,12 @@ class AddInvoiceContainer extends React.Component {
       comment: { status: null, help: null },
     },
   }
+
   componentDidMount() {
     const { fetchInvoices: fetchInvoicesOnMount } = this.props;
     fetchInvoicesOnMount();
   }
+
   componentDidUpdate(prevProps) {
     const { error } = this.props;
 
@@ -44,6 +48,7 @@ class AddInvoiceContainer extends React.Component {
       // );
     }
   }
+
   createInvoiceOnSubmit = (invoice) => {
     const { createInvoice: create } = this.props;
 
@@ -56,6 +61,7 @@ class AddInvoiceContainer extends React.Component {
       }
     });
   }
+
   validateFields = ({ number, comment }) => {
     const { invoiceNumbers } = this.props;
     const num = Number(number);
@@ -78,6 +84,7 @@ class AddInvoiceContainer extends React.Component {
     });
     return result;
   }
+
   render() {
     const { redirectTo, validation } = this.state;
 

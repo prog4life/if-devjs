@@ -3,10 +3,12 @@ import PropTypes from 'prop-types';
 
 const Paper = ({ className, title, children }) => (
   <div className={className ? `paper ${className}` : 'paper'}>
-    {title &&
-      <header className="paper__title">
-        {title}
-      </header>
+    {title
+      && (
+        <header className="paper__title">
+          {title}
+        </header>
+      )
     }
     {children}
   </div>

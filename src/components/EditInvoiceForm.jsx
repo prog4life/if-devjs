@@ -25,25 +25,28 @@ const { TextArea } = Input;
 class EditInvoiceForm extends React.Component {
   static propTypes = {
     editable: PropTypes.shape({
-      number: PropTypes.number,
-      date_due: PropTypes.string,
-      date_created: PropTypes.string,
-      date_supply: PropTypes.string,
       comment: PropTypes.string,
+      date_created: PropTypes.string,
+      date_due: PropTypes.string,
+      date_supply: PropTypes.string,
+      number: PropTypes.number,
     }).isRequired,
     error: PropTypes.string,
     isUpdating: PropTypes.bool.isRequired,
     match: RouterPropTypes.match.isRequired,
     updateInvoice: PropTypes.func.isRequired,
   }
+
   static defaultProps = {
     error: null,
   }
+
   state = {
     redirectTo: null,
     dateDue: null,
     supplyDate: null,
   }
+
   componentDidMount() {
     // const { error } = this.props;
     console.log('edit form props', this.props);
@@ -52,6 +55,7 @@ class EditInvoiceForm extends React.Component {
     //   this.displayErrorMessage('delete');
     // }
   }
+
   componentDidUpdate(prevProps) {
     const { error } = this.props;
 
@@ -59,6 +63,7 @@ class EditInvoiceForm extends React.Component {
       this.displayErrorMessage('update');
     }
   }
+
   displayErrorMessage = (action) => {
     // const { resetInvoicesError } = this.props;
 
@@ -69,6 +74,7 @@ class EditInvoiceForm extends React.Component {
     //   resetInvoicesError,
     // );
   }
+
   handleSubmit = (event) => {
     event.preventDefault();
 
@@ -116,6 +122,7 @@ class EditInvoiceForm extends React.Component {
       }
     });
   }
+
   handleDateChange(dateType) {
     return (momentObj) => {
       this.setState({
@@ -123,6 +130,7 @@ class EditInvoiceForm extends React.Component {
       });
     };
   }
+
   render() {
     const { isUpdating, editable } = this.props;
     const { redirectTo } = this.state;
