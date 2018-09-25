@@ -6,9 +6,7 @@ build/
 public/
 dist/
 
-# src/assets/
-
-# config/
+# environment variables
 **/.env
 
 # .eslintrc.json
@@ -22,5 +20,3 @@ npm-debug.log
 **/.vscode/
 temp/
 tmp/
-TEMP/
-TMP/

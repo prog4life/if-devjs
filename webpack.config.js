@@ -6,16 +6,16 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const DuplPkgCheckrPlugin = require('duplicate-package-checker-webpack-plugin');
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 // const BabelPluginTransformImports = require('babel-plugin-transform-imports');
 // const CompressionPlugin = require('compression-webpack-plugin');
 // const VisualizerPlugin = require('webpack-visualizer-plugin');
 const autoprefixer = require('autoprefixer');
-// const scssSyntax = require('postcss-scss');
 // const cssnano = require('cssnano');
+// const scssSyntax = require('postcss-scss');
 
 process.traceDeprecation = true; // or run process with --trace-deprecation flag
 
-// const env = process.env.NODE_ENV;
 const env = process.env.NODE_ENV || 'development';
 const isProduction = env === 'production';
 
@@ -35,7 +35,7 @@ module.exports = {
   },
   output: {
     filename: isProduction ? 'js/[name].[chunkhash:4].js' : '[name].[id].js',
-    chunkFilename: isProduction ? 'js/[name].[chunkhash:4].js' : '[id].[name].js',
+    chunkFilename: isProduction ? 'js/[name].[chunkhash:4].js' : '[name].js',
     path: path.resolve(__dirname, 'build'),
     publicPath: '/',
   },
@@ -68,6 +68,7 @@ module.exports = {
       mobile: true,
     }),
     // new CompressionPlugin({
+    //   cache: true, // default: false, enable file caching
     //   deleteOriginalAssets: true,
     //   test: /\.js/
     // }),
@@ -101,7 +102,7 @@ module.exports = {
       },
     }),
     new webpack.optimize.CommonsChunkPlugin({
-      name: 'helpers', // OR 'secondary' OR 'env' OR 'base'
+      name: 'mixed', // OR 'secondary' OR 'env' OR 'base'
       chunks: ['vendors'],
       minChunks({ resource }) {
         const re = /(core-js|whatwg-fetch|regenerator-runtime|lodash|moment|history|create-react-class)/;
@@ -134,10 +135,18 @@ module.exports = {
       // reportFilename: '../temp', // relative to output.path
       openAnalyzer: false,
     }),
-    // new VisualizerPlugin(),
+    new CircularDependencyPlugin({
+      exclude: /temp|node_modules/i, // exclude detection of files
+      failOnError: true, // add errors to webpack instead of warnings
+      // allow import cycles that include an asyncronous import, e.g. via
+      allowAsyncCycles: false, // import(/* webpackMode: "weak" */ './file.js')
+      cwd: process.cwd(), // for displaying module paths
+    }),
     new DuplPkgCheckrPlugin(),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    // new VisualizerPlugin(),
   ],
+  // =============================== RESOLVE ==================================
   resolve: {
     alias: {
       components: path.resolve(__dirname, 'src/components'),
@@ -148,12 +157,13 @@ module.exports = {
       utils: path.resolve(__dirname, 'src/utils'),
     },
     modules: [
-      path.resolve(__dirname, 'src'),
       // path.resolve(__dirname, 'src/components'),
+      path.resolve(__dirname, 'src'),
       'node_modules',
     ],
     extensions: ['.js', '.json', '.jsx', '.less', '*'],
   },
+  // ============================ MODULE (lOADERS) ============================
   module: {
     rules: [
       // -------------------- JS/JSX BABEL-LOADER -----------------------------
@@ -163,10 +173,13 @@ module.exports = {
         include: [path.resolve(__dirname, 'src')],
         exclude: [path.resolve(__dirname, 'node_modules')],
         options: {
-          // TODO: "transform-imports" (babel-plugin-transform-imports)
+          babelrc: false, // default: true
+          // TODO: try "transform-imports" (babel-plugin-transform-imports)
+          cacheDirectory: true,
           // ------------------------ BABEL PLUGINS ---------------------------
           plugins: [
-            'react-hot-loader/babel',
+            'react-hot-loader/babel', // consider replacing if not in dev mode
+            // 'syntax-dynamic-import',
             'transform-class-properties',
             // babel-plugin-import will not work properly if library is added
             // to the webpack config vendor (probably separate "vendor" entry)
@@ -175,6 +188,7 @@ module.exports = {
               libraryDirectory: 'es',
               style: true, // true OR 'css'(without optimization)
             }],
+            // TODO: replace next concat by .filter(Boolean)
           ].concat(isProduction ? [] : ['transform-react-jsx-source']),
           // ------------------------ BABEL PRESETS ---------------------------
           presets: [
@@ -183,7 +197,14 @@ module.exports = {
               useBuiltIns: 'usage', // or 'entry' or false
               debug: true,
               targets: {
-                browsers: ['last 2 versions'],
+                browsers:
+                  [
+                    'defaults', // > 0.5%, last 2 versions, Firefox ESR, not dead
+                    // "not Firefox ESR", // requires few polyfills
+                    `not ie ${isProduction ? '<' : '<='} 11`,
+                    `not android <= ${isProduction ? '62' : '66'}`,
+                    'not chrome <= 49',
+                  ],
               },
               exclude: [
                 'web.timers', // needed only for IE9-
@@ -194,12 +215,11 @@ module.exports = {
             'react',
             'stage-3',
           ],
-          cacheDirectory: true,
         },
       },
       // --------------------- CSS/SCSS LOADERS -------------------------------
       {
-        test: /\.(scss|css)$/,
+        test: /\.(scss|css)$/, // OR /\.s?[ac]ss$/, OR /\.(sa|sc|c)ss$/,
         include: [
           path.resolve(__dirname, 'src/styles'),
           path.resolve(__dirname, 'src/components'),
@@ -255,17 +275,25 @@ module.exports = {
       },
       {
         test: /\.(png|jpe?g|gif|svg)$/,
+        // TODO: consider to remove include or change 'src'
         include: path.resolve(__dirname, 'src'),
         use: [
           // --------------------- FILE-LOADER --------------------------------
           {
             loader: 'file-loader',
             options: {
-              name: isProduction ? '[name].[hash:4].[ext]' : '[name].[ext]',
-              // outputPath: 'static/', // custom output path,
-              useRelativePath: true, // set to isProduction ?
+              name(file) {
+                if (env === 'development') {
+                  return '[path][name].[ext]';
+                }
+                return '[name].[hash:5].[ext]';
+              },
+              // name: isProduction ? '[name].[hash:4].[ext]' : '[name].[ext]',
+              // outputPath: 'assets/', // custom output path
+              // useRelativePath: true, // isProd
             },
           },
+          // --------------------- IMAGE-WEBPACK-LOADER -----------------------
           // {
           //   loader: 'image-webpack-loader',
           //   query: {
@@ -274,22 +302,25 @@ module.exports = {
           //     interlaced: false,
           //     pngquant: {
           //       quality: '65-90',
-          //       speed: 4
-          //     }
-          //   }
-          // }
+          //       speed: 4,
+          //     },
+          //   },
+          // },
         ],
       },
       // --------------------------- URL-LOADER -------------------------------
-      // {
-      //   test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/,
-      //   loader: 'url-loader',
-      //   options: {
-      //     limit: 10000
-      //   }
-      // }
+      {
+        // TEMP: png removed, due to problem with extra emitted png file
+        // caused by not working limit option
+        test: /\.(jpe?g|gif|svg|eot|ttf|woff|woff2)$/i,
+        loader: 'url-loader',
+        options: {
+          limit: 8192, // 10000
+        },
+      },
     ],
   },
+  // ============================= DEV-SERVER =================================
   devServer: {
     progress: true,
     contentBase: path.resolve(__dirname, 'build'),
