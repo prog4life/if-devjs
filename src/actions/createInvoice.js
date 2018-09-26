@@ -19,9 +19,10 @@ export const createInvoiceSuccess = makeActionCreator(
 //   id: result,
 // });
 
-export const createInvoiceFailure = errorMessage => ({
+export const createInvoiceFailure = ({ message } = {}) => ({
   type: aT.CREATE_INVOICE_FAILURE,
-  message: errorMessage || 'Failed to create invoice',
+  error: true,
+  message: message || 'Failed to create invoice',
 });
 
 export const createInvoice = invoice => async (dispatch) => {
@@ -38,11 +39,9 @@ export const createInvoice = invoice => async (dispatch) => {
     const normalized = normalize(response.data, schemas.invoice);
 
     console.log('normalized create_invoice response ', normalized);
-    dispatch(createInvoiceSuccess(normalized));
-    return true; // NOTE: OR dispatched action ?
+    return dispatch(createInvoiceSuccess(normalized)); // NOTE: OR dispatched action ?
   } catch (error) {
-    dispatch(createInvoiceFailure(error.message));
     console.error(error);
-    return null;
+    return dispatch(createInvoiceFailure(error));
   }
 };
