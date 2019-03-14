@@ -1,11 +1,13 @@
 .invoices-page {
   @extend %page-base;
   // paper padding x 2 + paper border x 2 + page padding x 2 + table min-width (1084px)
-  min-width: 16px * 2 + 1px * 2 + 20px * 2 + 900px;
+  // min-width: 16px * 2 + 1px * 2 + 20px * 2 + 900px;
 
-  @media (min-width: $lg) {
-    min-width: 16px * 2 + 1px * 2 + 20px * 2 + 1084px;
-  }
+  // width: 100%;
+
+  // @media (min-width: $lg) {
+  //   min-width: 16px * 2 + 1px * 2 + 20px * 2 + 1084px;
+  // }
 }
 
 .invoices-page__content {

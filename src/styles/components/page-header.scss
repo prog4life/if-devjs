@@ -1,21 +1,25 @@
 .page-header {
   display: flex;
   align-items: center;
-  font-size: 24px;
-  font-weight: 500;
   border-left: 5px solid #ddd;
-  min-height: 40px;
   margin-bottom: 30px;
 }
 
-.page-header__text {
+.page-header__title {
+  font-size: 24px;
+  font-weight: 500;
+  min-height: 40px;
   color: #888;
   padding: 0 1em;
-  vertical-align: 15%;
   white-space: nowrap;
 }
 
-// .page-header__middle-line {
-//   border-top: 1px solid #ddd;
-//   flex-grow: 1;
-// }
+.page-header__line {
+  border: none;
+  background: #e2dfdf;
+  flex: 1;
+  min-width: auto !important;
+  height: 1px;
+  margin-top: 21px;
+  margin-bottom: 18px;
+}
